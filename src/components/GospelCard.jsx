@@ -1,27 +1,23 @@
 import { useState } from "react";
-
-// TODO - get API key from https://bibliaapi.com/docs/API_Keys 
-// TODO - create credentials/credentials.js
-/*
-    const bibliaCredentials = {
-        name: 'name',
-        apiKey: '',
-        type: 'Web',
-        appUrl: '',
-    }
-    export default bibliaCredentials
-*/
-// TODO - import bibliaCredentials from './credentials/credentials';
-
 import Spinner from "./Spinner";
 
 export default function GospelCard({ gospel, onLoad }) {
   const [showText, setShowText] = useState(false);
   const [isSpinnerShowing, setSpinnerShowing] = useState(false)
+  const [gospelText, setGospelText] = useState(gospel.text)
 
     const handleShowClick = () => {
-        // implement handleShowClick
-        // TODO - fetch Bible Gospel content text like https://bibliaapi.com/docs/Bible_Content 
+       setShowText(true)
+        fetch(`http://localhost:3000/gospel`)
+        .then(async (text)=>{
+            console.log("handleLoad text:", text);
+            if (text.ok) {
+                const gotGospelText = await text.text()
+                setGospelText(gotGospelText)
+            }
+        })
+        .catch(console.warn)
+        onLoad(gospel.name, gospel.text)
     }
 
   return (
@@ -51,7 +47,7 @@ export default function GospelCard({ gospel, onLoad }) {
           maxHeight: '240px',
           textAlign: 'left',
         }}>
-          {gospel.text}
+          {gospelText}
         </div>
       )}
       {/* TODO - show Spinner while content is loading */}
